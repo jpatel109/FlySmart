@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | FlySmart</title>
+
+  <!-- Font Awesome for Icons (Eye Icon) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"/>
+
+  <!-- reCAPTCHA -->
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Register for FlySmart</h2>
+
+    <!-- New (working Flask flash system) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <!-- Full Name -->
+      <label for="full_name">Full Name</label>
+      <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" required/>
+
+      <!-- Email -->
+      <label for="email">Email</label>
+      <input type="email" name="email" placeholder="Enter your email" required/>
+
+      <!-- Phone Number -->
+      <label for="phone">Phone Number</label>
+      <input type="tel" name="phone" placeholder="Enter your phone number" required/>
+
+      <!-- Date of Birth -->
+      <label for="dob">Date of Birth</label>
+      <input type="date" name="dob" required/>
+
+      <!-- Gender -->
+      <label for="gender">Gender</label>
+      <select name="gender" required>
+        <option value="" disabled selected>Select your gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+
+      <!-- Password -->
+      <label for="password">Password</label>
+      <div class="password-container">
+        <input type="password" id="password" name="password" class="password-field" required/>
+        <span id="togglePassword" class="toggle-password">
+          <i class="fa fa-eye"></i>
+        </span>
+      </div>
+
+      <!-- Confirm Password -->
+      <label for="confirm-password">Confirm Password</label>
+      <div class="password-container">
+        <input type="password" id="confirm-password" name="confirm_password" class="password-field" required/>
+        <span id="toggleConfirmPassword" class="toggle-password">
+          <i class="fa fa-eye"></i>
+        </span>
+      </div>
+
+      <!-- ✅ Google reCAPTCHA -->
+      <div style="margin: 15px 0;">
+        <div class="g-recaptcha" data-sitekey="6Lcc7CcrAAAAALp7IPD7lO0H5q3yKpNwSCs83Mb-"></div>
+      </div>
+      
+
+      <!-- Submit Button -->
+      <button type="submit" id="register-btn">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+  </div>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/passwordToggle.js') }}"></script>
+</body>
+</html>

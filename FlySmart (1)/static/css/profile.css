@@ -1,0 +1,121 @@
+/* profile.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f2f7fb;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: #ffffff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-header h2 {
+    color: #2c3e50;
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.profile-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid #007bff;
+}
+
+.profile-info {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #333;
+}
+
+.profile-info strong {
+    color: #2c3e50;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.profile-actions a {
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-actions .edit-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.profile-actions .edit-btn:hover {
+    background-color: #0056b3;
+}
+
+.profile-actions .settings-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.profile-actions .settings-btn:hover {
+    background-color: #1e7e34;
+}
+
+.profile-img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #007bff;
+    margin-bottom: 15px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+
+.profile-details p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.btn {
+    display: inline-block;
+    margin-top: 15px;
+    margin-right: 10px;
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+.btn.green {
+    background: #17a2b8;
+    color: white;
+}

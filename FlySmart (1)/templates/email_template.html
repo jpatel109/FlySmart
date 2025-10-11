@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      color: #333;
+    }
+    .ticket-box {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #007BFF;
+      margin-bottom: 10px;
+    }
+    .details p {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .section-title {
+      margin-top: 25px;
+      font-weight: bold;
+      font-size: 16px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 5px;
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 13px;
+      color: #777;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="ticket-box">
+    <h2>🛫 FlySmart Ticket Confirmation</h2>
+    <p>Hello <strong>{{ passenger_name or 'Guest' }}</strong>,</p>
+    <p>Thank you for booking with <strong>FlySmart</strong>. Here are your flight details:</p>
+
+    <div class="details">
+      <div class="section-title">🎟️ Booking Details</div>
+      <p><strong>Ticket ID:</strong> {{ ticket_id or 'N/A' }}</p>
+      <p><strong>Flight Number:</strong> {{ flight_number or 'N/A' }} ({{ airline or 'N/A' }})</p>
+      <p><strong>From:</strong> {{ departure or 'N/A' }} → <strong>To:</strong> {{ arrival or 'N/A' }}</p>
+      
+      <p><strong>Departure:</strong> {{ departure_time.strftime('%d %b %Y, %I:%M %p') if departure_time else 'N/A' }}</p>
+      <p><strong>Arrival:</strong> {{ arrival_time.strftime('%d %b %Y, %I:%M %p') if arrival_time else 'N/A' }}</p>
+      
+      <p><strong>Seat Preference:</strong> {{ seat_preference if seat_preference else "Not Selected" }}</p>
+      <p><strong>Meal Option:</strong> {{ meal_option if meal_option else "Not Selected" }}</p>
+      <p><strong>Class:</strong> {{ flight_class if flight_class else "Not Selected" }}</p>
+    </div>
+    <div class="details">
+      <div class="section-title">💳 Price Summary</div>
+      <p><strong>Base Fare:</strong> ₹{{ "{:,.2f}".format(base_fare) }}</p>
+      <p><strong>Taxes & Fees:</strong> ₹{{ "{:,.2f}".format(tax) }}</p>
+      
+      <!-- Add-ons Total -->
+      <p><strong>Add-ons Total:</strong> ₹{{ "{:,.2f}".format(addon_total) }}</p>
+    
+      <!-- List of Add-ons -->
+      {% if addon_items %}
+        <ul>
+          {% for addon in addon_items %}
+            {% set parts = addon.split(':') %}
+            <li>🧩 <strong>{{ parts[0] }}</strong>: ₹{{ parts[1] }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No additional add-ons selected.</p>
+      {% endif %}
+    
+      <!-- Total Paid Calculation -->
+      <p><strong>Total Paid:</strong> ₹{{ "{:,.2f}".format(base_fare + tax + addon_total) }}</p>
+    </div>
+    
+    
+
+    <div class="footer">
+      <p>📅 You can add this flight to your calendar using the button below (coming soon).</p>
+      <p>📞 Need help? Contact FlySmart support at <a href="mailto:support@flysmart.com">support@flysmart.com</a></p>
+      <p>🛫 We look forward to flying with you!</p>
+      <p>– FlySmart Team</p>
+    </div>
+  </div>
+</body>
+</html>

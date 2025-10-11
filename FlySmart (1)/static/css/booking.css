@@ -1,0 +1,331 @@
+/* ==== Global Styles ==== */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f4f7fa;
+  color: #333;
+}
+
+.booking-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+h2, h3, h4 {
+  color: #004080;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  margin-top: 0.5rem;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+button.confirm-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 2rem;
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button.confirm-btn:hover {
+  background: #0056b3;
+}
+
+/* ==== Flight Summary Card ==== */
+.flight-summary-card {
+  background: #eaf4ff;
+  border-left: 6px solid #007bff;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+  font-size: 0.95rem;
+}
+
+/* ==== Input Icons ==== */
+.input-with-icon {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.input-with-icon i {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  color: #888;
+}
+
+.input-with-icon input,
+.input-with-icon select {
+  padding-left: 2.5rem;
+}
+
+/* ==== Section Boxes ==== */
+.section-box {
+  border: 1px solid #ddd;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  margin-top: 2rem;
+  background: #f9fbfc;
+}
+
+/* ==== Add-ons Collapsible Section ==== */
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.collapsible-header:hover {
+  color: #007bff;
+}
+
+#addon-arrow {
+  font-weight: bold;
+  transition: transform 0.3s ease;
+}
+
+#addon-arrow.rotated {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  margin-top: 1rem;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+.collapsible-content.hidden {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==== Add-on Option Styles ==== */
+.addon-section {
+  background-color: #f9fbfc;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 30px;
+}
+
+.addon-header {
+  font-size: 20px;
+  font-weight: 600;
+  color: #004080;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.addon-header .arrow {
+  font-size: 16px;
+  margin-left: auto;
+  color: #666;
+}
+
+.addon-list {
+  margin-top: 16px;
+}
+
+.addon-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 12px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.addon-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.addon-card input[type="checkbox"] {
+  margin-right: 16px;
+  width: 18px;
+  height: 18px;
+  accent-color: #0078D7;
+  cursor: pointer;
+}
+
+.addon-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+}
+
+.addon-content .icon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.addon-content .title {
+  font-size: 16px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.addon-content .price {
+  font-weight: bold;
+  color: #0078D7;
+}
+
+.total-addon-price {
+  margin-top: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #0078D7;
+  text-align: right;
+}
+
+/* ==== Add-on Total ==== */
+.addons-total {
+  margin-top: 1rem;
+  font-weight: bold;
+  font-size: 1.05rem;
+  color: #007bff;
+}
+
+/* ==== Price Box ==== */
+.price-box {
+  margin-top: 2rem;
+  padding: 1rem 1.25rem;
+  background: #fff8e1;
+  border: 2px dashed #ffc107;
+  border-radius: 1rem;
+  font-size: 1rem;
+}
+
+.price-box p {
+  margin: 0.5rem 0;
+}
+
+/* ==== Notes Section ==== */
+.section textarea {
+  margin-top: 1rem;
+  font-family: inherit;
+}
+
+/* ==== Responsive ==== */
+@media (max-width: 600px) {
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==== Optional Toast Notification ==== */
+.toast {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: #28a745;
+  color: white;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+  z-index: 9999;
+  display: none;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast.show {
+  display: block;
+}
+
+.toast.hide {
+  display: none;
+  animation: fadeOut 0.4s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+}
+
+
+/* ==== Flight Class Dropdown ==== */
+.flight-class-group {
+  margin-bottom: 1.5rem;
+}
+
+.flight-class-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #004080;
+}
+
+.flight-class-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  background-color: #fff;
+  transition: border-color 0.3s ease;
+}
+
+.flight-class-group select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}

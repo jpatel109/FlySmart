@@ -1,0 +1,119 @@
+/* General body styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Profile container */
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    padding: 20px;
+}
+
+/* Bookings section */
+.bookings {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+}
+
+/* Header */
+.bookings h2 {
+    color: #1c1c1c;
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Booking list */
+.bookings ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.bookings li {
+    font-size: 18px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.bookings li strong {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Flight Icons */
+.bookings li span {
+    margin-right: 5px;
+}
+
+/* Separator line */
+hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Empty booking message */
+.bookings p {
+    font-size: 18px;
+    color: #888;
+    font-style: italic;
+}
+
+/* Button styling */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #1c87c9;
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn.gray {
+    background-color: #888;
+}
+
+.btn:hover {
+    background-color: #155a77;
+}
+
+.btn.gray:hover {
+    background-color: #555;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .bookings {
+        padding: 20px;
+    }
+
+    .bookings h2 {
+        font-size: 24px;
+    }
+
+    .bookings li {
+        font-size: 16px;
+    }
+
+    .btn {
+        font-size: 14px;
+    }
+}

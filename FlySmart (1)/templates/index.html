@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlySmart - Flight Booking Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    
+
+    <!-- Leaflet.js for Interactive Flight Route Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <header>
+    <div class="container">
+        <img src="/static/images/flysmart-logo.png" alt="FlySmart Logo" class="logo">
+        <h1>FlySmart - Your Intelligent Flight Assistant</h1>
+        <p>Book flights, get flight details, and more, all with your voice or typing!</p>
+    </div>
+
+
+
+    <!-- Authentication Section -->
+    <div class="auth-section">  
+        {% if current_user.is_authenticated %}
+            <div class="user-profile">
+                <button id="profile-btn" onclick="toggleProfileDropdown()">👤 {{ current_user.full_name }}</button>
+                <div id="profile-dropdown" class="profile-dropdown hidden">
+                    <img src="{{ url_for('static', filename=current_user.profile_pic if current_user.profile_pic else 'img/default.jpg') }}" alt="Profile Picture">
+                    <p><strong>Name:</strong> {{ current_user.full_name if current_user.full_name else "Not provided" }}</p>
+                    <p><strong>Email:</strong> {{ current_user.email }}</p>
+                    <p><strong>Phone:</strong> {{ current_user.phone_number if current_user.phone_number else "Not provided" }}</p>
+                    <p><strong>Date of Birth:</strong> {{ current_user.dob.strftime('%d-%m-%Y') if current_user.dob else "Not provided" }}</p>
+                    <p><strong>Role:</strong> {{ current_user.role }}</p>
+    
+                    <!-- Updated buttons to link to new pages -->
+                    <a href="{{ url_for('profile') }}" class="profile-btn">View Profile</a>
+                    <a href="{{ url_for('account_settings_page') }}" class="settings-btn">Account Settings</a>
+                    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+                </div>
+            </div>
+        {% else %}
+            <a href="{{ url_for('login') }}"><button class="login-btn">Login</button></a>
+        {% endif %}
+    </div>
+    
+
+
+        <!-- Dark mode toggle switch -->
+        <div class="dark-mode-toggle">
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle">
+                <span class="slider round"></span>
+            </label>
+            <span>Dark Mode</span>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Login Form (Hidden by Default) -->
+<div id="login-form" class="auth-form hidden">
+    <h2>Login</h2>
+    <input type="text" id="login-username" placeholder="Enter Email" required>
+    <input type="password" id="login-password" placeholder="Enter Password" required>
+    <button onclick="loginUser()">Login</button>
+    <p>Don't have an account? <a href="#" onclick="showRegisterForm()">Register</a></p>
+</div>
+
+<!-- Register Form (Hidden by Default) -->
+<div id="register-form" class="auth-form hidden">
+    <h2>Register</h2>
+    <input type="text" id="register-username" placeholder="Enter Email" required>
+    <input type="password" id="register-password" placeholder="Enter Password" required>
+    <button onclick="registerUser()">Register</button>
+    <p>Already have an account? <a href="#" onclick="showLoginForm()">Login</a></p>
+</div>
+
+
+<!-- Search Form -->
+<div class="container">
+    <div class="search-container">
+        <input type="text" id="source-input" placeholder="Enter source city">
+        <input type="text" id="destination-input" placeholder="Enter destination city">
+        <button id="search-button" onclick="searchFlights()">Search</button>
+    </div>
+
+            <!-- Voice Assistant Button -->
+            <div class="voice-assistant-container">
+                <button id="voice-assistant-btn" onclick="activateVoiceAssistant()">🎙️ Activate Voice Assistant</button>
+            </div>
+            
+
+            <!-- Price Alert Box -->
+            <div class="price-alert">
+                <h3>Set a Price Filter</h3>
+                <input type="text" id="alert-flight" placeholder="Enter Destination">
+                <input type="number" id="alert-price" placeholder="Enter Price">
+                <button onclick="livePriceAlert()">🔍 Apply Filter</button>
+                <button id="reset-price-filter" class="reset-btn" onclick="resetPriceAlert()">🔄 Reset Filter</button>
+                <p id="alert-message"></p>
+            </div>
+
+
+<!-- Flight Search Results -->
+<div id="flight-results" class="flight-results">
+  <h2 class="results-header">✈️ Available Flights</h2>
+  <div id="available-flights-container" class="flights-grid">
+    {% for flight in flights %}
+    <div class="flight-card {{ flight.flight_class | lower }}">
+        <div class="flight-header">
+          <div class="route-line">
+            <span class="icon">🛫</span>
+            <span class="city">{{ flight.source }}</span>
+            <span class="arrow">→</span>
+            <span class="city">{{ flight.destination }}</span>
+            <span class="icon">🛬</span>
+          </div>
+          <span class="flight-class-tag">{{ flight.flight_class }}</span>
+        </div>
+      
+        <p>✈️ <strong>Airline:</strong> {{ flight.airline }}</p>
+        <p>🔢 <strong>Flight No:</strong> {{ flight.flight_number }}</p>
+        <p>🛩️ <strong>Aircraft:</strong> {{ flight.aircraft }}</p>
+      
+        <div class="flight-times">
+          <div class="time">
+            <p>⏰ <strong>Departure:</strong> {{ flight.departure_time }}</p>
+            <p>📅 <strong>Date:</strong> {{ flight.departure_date }}</p>
+          </div>
+      
+          <div class="duration-block">
+            <p>⏱ <strong>Duration:</strong> {{ flight.duration }}</p>
+            <div class="progress-bar"></div>
+          </div>
+      
+          <div class="time">
+            <p>🛬 <strong>Arrival:</strong> {{ flight.arrival_time }}</p>
+            <p>📅 <strong>Date:</strong> {{ flight.arrival_date }}</p>
+          </div>
+        </div>
+      
+        <p>🪑 <strong>Seats Available:</strong> {{ flight.seats }}</p>
+        <p class="price">💰 <strong>Price:</strong> ₹{{ flight.price }}</p>
+      
+        <a href="/booking/{{ flight.id }}" class="book-btn">📘 Book Now</a>
+    </div>      
+    {% endfor %}
+  </div>
+</div>
+  
+  
+
+          <!-- Flight Comparison Table -->
+          {% if search_performed %}
+          <div class="comparison-table">
+              <h2>✈️ Flight Comparison</h2>
+              <table>
+                  <tr>
+                      <th>Flight Number</th>
+                      <th>Airline</th>
+                      <th>Departure</th>
+                      <th>Arrival</th>
+                      <th>Duration</th>
+                      <th>Price (₹)</th>
+                      <th>Seats Available</th>
+                  </tr>
+                  {% for flight in flights %}
+                  <tr>
+                      <td>{{ flight.flight_number }}</td>
+                      <td>{{ flight.airline }}</td>
+                      <td>{{ flight.departure }}</td>
+                      <td>{{ flight.arrival }}</td>
+                      <td>{{ flight.duration }}</td>
+                      <td>₹{{ flight.price }}</td>
+                      <td>{{ flight.seats_available }}</td>
+                  </tr>
+                  {% endfor %}
+              </table>
+          </div>
+      {% else %}
+          <div class="comparison-table" style="display: none;"></div>
+      {% endif %}
+      
+
+          
+
+  <!-- Flight Map using Leaflet.js -->
+<div class="flight-map">  
+    <h2>Flight Route</h2>
+    <div id="flight-map" style="height: 400px; width: 100%;"></div>
+</div>
+
+
+
+<!-- User Reviews Section -->
+<div class="reviews">
+    <h2>User Reviews</h2>
+    
+    <div id="user-reviews">
+        <!-- Reviews will be loaded dynamically -->
+    </div>
+
+    <!-- Star Rating System -->
+    <div class="rating">
+        <span class="star" data-value="1">&#9733;</span>
+        <span class="star" data-value="2">&#9733;</span>
+        <span class="star" data-value="3">&#9733;</span>
+        <span class="star" data-value="4">&#9733;</span>
+        <span class="star" data-value="5">&#9733;</span>
+    </div>
+
+    <div class="review-input">
+        <input type="text" id="review-text" placeholder="Leave a review">
+        <button onclick="submitReview()">Submit Review</button>
+    </div>
+</div>
+
+
+
+    <!-- Floating Chatbot Button -->
+    <button id="chatbot-btn" onclick="toggleChat()">💬</button>
+
+    <!-- Chatbot Popup -->
+    <div id="chatbot">
+        <div id="chat-header">
+            <span>Chat with FlySmart</span>
+            <button onclick="toggleChat()">✖</button>
+        </div>
+        <div id="chat-body">
+            <p class="bot-message">Hello! How can I assist you?</p>
+        </div>
+        <input type="text" id="chat-input" placeholder="Type your message..." onkeydown="if(event.key === 'Enter') sendMessage()">
+    </div>
+    
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 FlySmart. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/static/js/script.js"></script>
+</body>
+
+</html>

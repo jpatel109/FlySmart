@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Bookings - FlySmart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+</head>
+<body>
+    <div class="profile-container">
+        <div class="bookings">
+            <h2>My Bookings</h2>
+            {% if bookings %}
+                <ul>
+                    {% for booking in bookings %}
+                    <li>
+                        ✈️ <strong>Flight:</strong> {{ booking.flight.airline }}<br>
+                        🗓️ <strong>Date:</strong> {{ booking.booking_date.strftime('%d %b %Y') }}<br>
+                        🎫 <strong>Ticket ID:</strong> FS{{ booking.booking_date.strftime('%d%m%y') }}-{{ booking.id }}
+                    </li>                    
+                        <hr>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>You have no bookings yet.</p>
+            {% endif %}
+            <a href="{{ url_for('profile') }}" class="btn gray">← Back to Profile</a>
+        </div>
+    </div>
+</body>
+</html>

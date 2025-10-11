@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Book Your Flight - FlySmart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="booking-container">
+    <h2>🛫 Confirm Your Flight</h2>
+
+    <!-- Dynamic Flight Summary -->
+    <div class="flight-summary-card">
+      <h3>✈️ Flight Summary</h3>
+      <div class="summary-grid">
+        <div><strong>From:</strong> {{ flight.departure }}</div>
+        <div><strong>To:</strong> {{ flight.arrival }}</div>
+        <div><strong>Flight No:</strong> {{ flight.flight_number }}</div>
+        <div><strong>Airline:</strong> {{ flight.airline }}</div>
+        <div><strong>Aircraft:</strong> {{ flight.aircraft }}</div>
+        <div><strong>Seats Available:</strong> {{ flight.available_seats }}</div>
+        <div><strong>Class:</strong> {{ flight.flight_class }}</div>
+        <div><strong>Departure:</strong> {{ flight.departure_time.strftime('%d %b %Y, %I:%M %p') }}</div>
+        <div><strong>Arrival:</strong> {{ flight.arrival_time.strftime('%d %b %Y, %I:%M %p') }}</div>
+        <div><strong>Duration:</strong> {{ flight.duration }}</div>
+      </div>
+    </div>
+
+    <form action="/confirm_booking" method="POST">
+      <!-- 🧍 Passenger Details -->
+      <div class="input-with-icon">
+        <i class="fas fa-user"></i>
+        <input type="text" name="full_name" value="{{ current_user.full_name }}" required>
+      </div>
+
+      <div class="input-with-icon">
+        <i class="fas fa-envelope"></i>
+        <input type="email" name="email" value="{{ current_user.email }}" required>
+      </div>
+
+      <div class="input-with-icon">
+        <i class="fas fa-phone"></i>
+        <input type="tel" name="phone" value="{{ current_user.phone_number }}" required>
+      </div>
+
+      <div class="input-with-icon">
+        <i class="fas fa-passport"></i>
+        <input type="text" name="passport" placeholder="Passport Number" required />
+      </div>
+      
+      <div class="input-with-icon">
+        <i class="fas fa-layer-group"></i>
+        <select name="flight_class" id="flight_class" required>
+          <option value="" disabled selected>Select Class</option>
+          <option value="Economy">Economy</option>
+          <option value="Business">Business</option>
+          <option value="First">First</option>
+        </select>
+      </div>
+      
+      
+      <!-- 🪑 Seat & Meal Selection -->
+      <div class="input-with-icon">
+        <i class="fas fa-chair"></i>
+        <select name="seat" required>
+          <option value="" disabled selected>Select Seat Preference</option>
+          <option value="window">Window</option>
+          <option value="aisle">Aisle</option>
+          <option value="middle">Middle</option>
+        </select>
+      </div>
+
+      <div class="input-with-icon">
+        <i class="fas fa-utensils"></i>
+        <select name="meal" required>
+          <option value="" disabled selected>Select Meal Option</option>
+          <option value="veg">Vegetarian</option>
+          <option value="nonveg">Non-Vegetarian</option>
+        </select>
+      </div>
+
+      <!-- 💳 Payment Info -->
+      <div class="section-box payment-section">
+        <h3><i class="fas fa-credit-card"></i> Payment Information</h3>
+
+        <label for="card-number">Card Number</label>
+        <div class="input-with-icon">
+          <i class="fas fa-credit-card"></i>
+          <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required>
+          <small class="error-msg" id="card-error"></small>
+        </div>
+
+        <label for="card-name">Card Holder Name</label>
+        <div class="input-with-icon">
+          <i class="fas fa-user"></i>
+          <input type="text" id="card-name" placeholder="John Doe" required>
+          <small class="error-msg" id="card-error"></small>
+        </div>
+
+        <label for="expiry">Expiry Date</label>
+        <div class="input-with-icon">
+          <i class="fas fa-calendar-alt"></i>
+          <input type="text" id="expiry" placeholder="MM/YY" required>
+          <small class="error-msg" id="card-error"></small>
+        </div>
+
+        <label for="cvv">CVV</label>
+        <div class="input-with-icon">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="cvv" placeholder="•••" required>
+          <small class="error-msg" id="card-error"></small>
+        </div>
+      </div>
+
+      <!-- 🏨 Add-ons Section -->
+      <div class="addon-section">
+        <div class="addon-header" onclick="toggleAddons()">🏨 <span>Add-ons</span><span class="arrow">▼</span></div>
+        <div class="addon-list" id="addonList">
+          <label class="addon-card">
+            <input type="checkbox" name="addons" value="Travel Insurance:1500" onchange="updateAddonPrice()">
+            <div class="addon-content">
+              <span class="icon">🛡️</span>
+              <span class="title">Travel Insurance</span>
+              <span class="price">₹1500</span>
+            </div>
+          </label>
+          <label class="addon-card">
+            <input type="checkbox" name="addons" value="Extra Baggage:800" onchange="updateAddonPrice()">
+            <div class="addon-content">
+              <span class="icon">💼</span>
+              <span class="title">Extra Baggage</span>
+              <span class="price">₹800</span>
+            </div>
+          </label>
+          <label class="addon-card">
+            <input type="checkbox" name="addons" value="Lounge Access:1000" onchange="updateAddonPrice()">
+            <div class="addon-content">
+              <span class="icon">🛋️</span>
+              <span class="title">Lounge Access</span>
+              <span class="price">₹1000</span>
+            </div>
+          </label>
+          <label class="addon-card">
+            <input type="checkbox" name="addons" value="Meal Upgrade:500" onchange="updateAddonPrice()">
+            <div class="addon-content">
+              <span class="icon">🍱</span>
+              <span class="title">Meal Upgrade</span>
+              <span class="price">₹500</span>
+            </div>
+          </label>
+          <div class="total-addon-price">
+            Total Add-on Price: <span id="totalPrice" class="price-text">₹0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Price Breakdown -->
+      <div class="price-details-box" style="background: #fff8e1; border: 2px dashed orange; border-radius: 15px; padding: 20px;">
+        <h3>💰 <strong>Price Details</strong></h3>
+        <p>Base Fare: ₹<span id="baseFare">{{ "{:,.2f}".format(base_fare) }}</span></p>
+        <p>Taxes & Fees: ₹<span id="taxes">{{ "{:,.2f}".format(tax) }}</span></p>
+        <p>Add-on Price: <span id="addonTotal">₹0.00</span></p>
+        <p><strong>Total: ₹<span id="grandTotal">{{ "{:,.2f}".format(total_price) }}</span></strong></p>        
+      </div>
+
+      <!-- Notes -->
+      <div class="section">
+        <textarea name="notes" placeholder="Add any special requests or notes..."></textarea>
+      </div>
+
+      <!-- Required hidden inputs -->
+        <input type="hidden" name="flight_id" value="{{ flight.id }}">
+        <input type="hidden" name="total_price" id="hiddenTotalPrice" value="{{ total_price }}">
+        <input type="hidden" name="addon_price" id="addon_price">
+        <input type="hidden" name="addon_details" id="addon_details">
+
+      <button type="submit" class="confirm-btn">✅ Confirm Booking</button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/booking.js') }}"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const addonCheckboxes = document.querySelectorAll('.addon-card input[type="checkbox"]');
+      const addonPriceText = document.getElementById('totalPrice');         // Inside Add-ons section
+      const addonTotalText = document.getElementById('addonTotal');         // Inside Price Details
+      const baseFareText = document.getElementById('baseFare');
+      const taxesText = document.getElementById('taxes');
+      const grandTotalText = document.getElementById('grandTotal');
+    
+      function parseAmount(text) {
+        return parseFloat(text.replace(/[₹,]/g, '').trim()) || 0;
+      }
+    
+      function formatAmount(value) {
+        return `₹${value.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
+      }
+    
+      function updateAddonPrice() {
+  let addonTotal = 0;
+  const addonList = [];
+
+  addonCheckboxes.forEach(cb => {
+    if (cb.checked) {
+      const [title, price] = cb.value.split(':');
+      addonTotal += parseFloat(price);
+      addonList.push(`${title}:${price}`);
+    }
+  });
+
+  // Update display
+  if (addonPriceText) addonPriceText.textContent = formatAmount(addonTotal);
+  if (addonTotalText) addonTotalText.textContent = formatAmount(addonTotal);
+
+  // Update hidden inputs
+  document.getElementById('addon_price').value = addonTotal.toFixed(2);
+  document.getElementById('addon_details').value = JSON.stringify(addonList);
+
+  // Update grand total
+  const baseFare = parseAmount(baseFareText.textContent);
+  const taxes = parseAmount(taxesText.textContent);
+  const grandTotal = baseFare + taxes + addonTotal;
+
+  grandTotalText.textContent = formatAmount(grandTotal);
+  const hiddenTotalInput = document.getElementById('hiddenTotalPrice');
+  if (hiddenTotalInput) hiddenTotalInput.value = grandTotal;
+}
+
+    
+      // Attach listener to all checkboxes
+      addonCheckboxes.forEach(cb => {
+        cb.addEventListener('change', updateAddonPrice);
+      });
+    
+      // Initial load
+      updateAddonPrice();
+    });
+    </script>    
+    
+</body>
+</html>

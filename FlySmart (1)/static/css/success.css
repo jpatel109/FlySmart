@@ -1,0 +1,85 @@
+/* success.css - FlySmart Booking Confirmation Page */
+
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(to right, #e3f2fd, #ffffff);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+  }
+  
+  .success-box {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+    padding: 30px 40px;
+    transition: all 0.3s ease;
+  }
+  
+  .success-box:hover {
+    box-shadow: 0 12px 30px rgba(0, 123, 255, 0.25);
+  }
+  
+  h2 {
+    color: #28a745;
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+  
+  .summary-section {
+    margin-top: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .summary-section:last-of-type {
+    border-bottom: none;
+  }
+  
+  .summary-section h4 {
+    color: #007BFF;
+    margin-bottom: 10px;
+    font-size: 18px;
+    border-left: 4px solid #007BFF;
+    padding-left: 10px;
+  }
+  
+  .summary-section p {
+    margin: 6px 0;
+  }
+  
+  .btn-back {
+    margin-top: 30px;
+    display: inline-block;
+    padding: 12px 25px;
+    background: #007BFF;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.3s ease;
+  }
+  
+  .btn-back:hover {
+    background: #0056b3;
+  }
+  
+  @media (max-width: 768px) {
+    .success-box {
+      padding: 20px;
+    }
+  
+    .btn-back {
+      font-size: 15px;
+      padding: 10px 20px;
+    }
+  }
+  

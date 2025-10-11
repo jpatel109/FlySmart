@@ -1,0 +1,2 @@
+2025-02-04 12:50:36,778 - ERROR - Error fetching flights: 1054 (42S22): Unknown column 'seats_left' in 'where clause'
+2025-02-04 12:50:36,787 - ERROR - Error inserting booking: 1054 (42S22): Unknown column 'departure' in 'field list'

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Success | FlySmart</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/success.css') }}">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      color: #333;
+    }
+    .success-box {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #28a745;
+      text-align: center;
+    }
+    .summary-section {
+      margin-top: 20px;
+    }
+    .summary-section h4 {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 5px;
+      color: #007BFF;
+    }
+    .summary-section p {
+      margin: 6px 0;
+    }
+    .btn-back {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background: #007BFF;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="success-box">
+    <h2>✅ Booking Confirmed!</h2>
+    <p style="text-align:center;">Thank you for booking with <strong>FlySmart</strong>.</p>
+
+    <div class="summary-section">
+      <h4>📄 Booking Summary</h4>
+      <p><strong>Ticket ID:</strong> {{ booking.ticket_id }}</p>
+      <p><strong>Passenger Name:</strong> {{ booking.passenger_name }}</p>
+      <p><strong>Email:</strong> {{ booking.email }}</p>
+      <p><strong>Phone:</strong> {{ booking.phone }}</p>
+      <p><strong>Class:</strong> {{ booking.flight_class }}</p>
+      <p><strong>Total Paid:</strong> ₹{{ "{:,.2f}".format(booking.total_price) }}</p>
+    </div>
+
+    <div class="summary-section">
+      <h4>✈️ Flight Details</h4>
+      <p><strong>Flight Number:</strong> {{ flight.flight_number }}</p>
+      <p><strong>Route:</strong> {{ flight.departure }} → {{ flight.arrival }}</p>
+      <p><strong>Departure:</strong> {{ flight.departure_time.strftime('%d %b %Y, %I:%M %p') }}</p>
+      <p><strong>Arrival:</strong> {{ flight.arrival_time.strftime('%d %b %Y, %I:%M %p') }}</p>
+      <p><strong>Airline:</strong> {{ flight.airline }}</p>
+    </div>
+
+    <div class="summary-section">
+        <h4>🧩 Add-ons</h4>
+        <p><strong>Meal:</strong> {{ addon_data['meal'] }}</p>
+        <p><strong>Seat:</strong> {{ addon_data['seat'] }}</p>
+        <p><strong>Notes:</strong> {{ addon_data['notes'] or "None" }}</p>
+    </div>
+    
+
+    <div style="text-align:center; margin-top: 20px;">
+        <button onclick="downloadPDF()" class="btn-back">📄 Download PDF</button>
+        <button onclick="window.print()" class="btn-back" style="background:#28a745;">🖨️ Print Ticket</button>
+        <a href="{{ url_for('index') }}" class="btn-back" style="background:#6c757d;">⬅ Back to Home</a>
+      </div>
+      
+  <script>
+    function downloadPDF() {
+      const element = document.querySelector('.success-box');
+      const opt = {
+        margin:       0.5,
+        filename:     'FlySmart_Ticket_{{ booking.ticket_id }}.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+</body>
+</html>

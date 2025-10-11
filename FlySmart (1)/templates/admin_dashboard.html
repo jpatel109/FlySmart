@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FlySmart Admin Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="admin-container">
+
+  <div class="admin-header">
+    <div class="admin-left">
+      <img src="{{ url_for('static', filename='images/admin_avatar.png') }}" alt="Admin Avatar" class="admin-avatar">
+      <div class="admin-welcome">
+        <span id="greeting">👋 Welcome, Admin!</span>
+        <span class="current-date" id="currentDate"></span>
+        <span class="current-time" id="currentTime"></span>
+      </div>
+    </div>
+    <div class="admin-logout">
+      <a href="{{ url_for('logout') }}" class="logout-btn">🚪 Logout</a>
+    </div>
+  </div>
+  
+  <h1>🛫 FlySmart Admin Dashboard</h1>
+
+  <!-- Insight Panels -->
+  <div class="insight-panels">
+    <div class="insight-card">🛫 <strong>Total Flights:</strong><br>{{ flights_count }}</div>
+    <div class="insight-card">👥 <strong>Registered Users:</strong><br>{{ users_count }}</div>
+    <div class="insight-card">📑 <strong>Total Bookings:</strong><br>{{ bookings_count }}</div>
+    <div class="insight-card">💰 <strong>Revenue:</strong><br>₹{{ revenue_total }}</div>
+  </div>
+
+  <!-- All Flights -->
+  <section class="admin-section">
+    <h2>📋 All Flights</h2>
+    <div class="flights-table">
+      {% if flights %}
+      <div class="flights-scroll-container">
+        {% for flight in flights %}
+        <div class="flight-row">
+          <div>
+            ✈️ <strong>{{ flight.flight_number }}</strong> — {{ flight.departure }} → {{ flight.arrival }} | ₹{{ flight.price }}
+          </div>
+          <a href="{{ url_for('admin_delete_flight', id=flight.id) }}" class="btn delete">🗑 Delete</a>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="no-data-message">No flights available.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- All Bookings -->
+  <section class="admin-section">
+    <h2>📑 All Bookings</h2>
+    <div class="bookings-table">
+      {% if bookings %}
+      <div class="bookings-scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th>Flight</th>
+              <th>Route</th>
+              <th>Booked On</th>
+              <th>Ticket ID</th>
+              <th>Amount Paid</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            <tr>
+              <td>{{ b.passenger_name }}</td>
+              <td>{{ b.email }}</td>
+              <td>{{ b.flight.flight_number if b.flight else 'N/A' }}</td>
+              <td>{{ b.source }} → {{ b.destination }}</td>
+              <td>{{ b.booking_time.strftime('%d %b %Y') if b.booking_time else 'N/A' }}</td>
+              <td>{{ b.ticket_id or 'N/A' }}</td>
+              <td>₹{{ "{:,.0f}".format(b.total_price) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="no-data-message">No bookings yet.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Upload Flights -->
+  <section class="admin-section">
+    <h2>📤 Upload Flights via Excel/CSV</h2>
+    <form action="{{ url_for('upload_flights') }}" method="POST" enctype="multipart/form-data" class="upload-form">
+      <input type="file" name="flight_file" accept=".csv, .xlsx" required>
+      <button type="submit" class="btn upload">Upload Flights</button>
+    </form>
+  </section>
+
+  <!-- All Users -->
+  <section class="admin-section">
+    <h2>👥 All Users</h2>
+    <div class="users-table">
+      {% if users %}
+      <div class="users-scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Full Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Gender</th>
+              <th>Phone</th>
+              <th>Date of Birth</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in users %}
+            <tr>
+              <td>{{ u.full_name }}</td>
+              <td>{{ u.email }}</td>
+              <td>{{ u.role }}</td>
+              <td>{{ u.gender }}</td>
+              <td>{{ u.phone_number }}</td>
+              <td>{{ u.dob.strftime('%d-%b-%Y') }}</td>
+              <td class="btn-group">
+                {% if u.role == 'user' %}
+                <a href="{{ url_for('promote_user', user_id=u.id) }}" class="btn promote">Promote</a>
+                {% elif u.role == 'admin' and u.id != current_user.id %}
+                <a href="{{ url_for('demote_user', user_id=u.id) }}" class="btn demote">Demote</a>
+                {% endif %}
+                {% if u.id != current_user.id %}
+                <a href="{{ url_for('delete_user', user_id=u.id) }}" class="btn delete">Delete</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <p class="no-data-message">No users found.</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Add New Flight -->
+  <div class="add-flight-form">
+    <h2>🛫 Add New Flight</h2>
+    <form action="{{ url_for('admin_add_flight') }}" method="POST" onsubmit="return validateFlightForm()">
+      <input type="text" id="flight_number" name="flight_number" placeholder="🔢 Flight Number" required>
+      <input type="text" name="departure" placeholder="📍 Departure City" required>
+      <input type="text" name="arrival" placeholder="📍 Arrival City" required>
+
+      <label>🕒 Departure Date & Time</label>
+      <input type="datetime-local" id="departure_time" name="departure_time" required>
+
+      <label>🕓 Arrival Date & Time</label>
+      <input type="datetime-local" id="arrival_time" name="arrival_time" required onblur="calculateDuration()">
+
+      <input type="text" name="airline" placeholder="🛩️ Airline Name" required>
+
+      <label>🎫 Class</label>
+      <select name="flight_class" required>
+        <option value="">-- Select Class --</option>
+        <option value="Economy">Economy</option>
+        <option value="Business">Business</option>
+        <option value="First Class">First Class</option>
+      </select>
+
+      <label>✈️ Aircraft</label>
+      <select name="aircraft" required>
+        <option value="">-- Select Aircraft --</option>
+        <option value="Airbus A320">Airbus A320</option>
+        <option value="Airbus A350">Airbus A350</option>
+        <option value="Boeing 737">Boeing 737</option>
+        <option value="Boeing 777">Boeing 777</option>
+        <option value="Embraer E190">Embraer E190</option>
+      </select>
+
+      <label>⌛ Duration (Auto)</label>
+      <input type="text" id="duration" name="duration" placeholder="e.g. 2hr 30min" readonly required>
+
+      <label>💺 Seats Available</label>
+      <select name="seats_available" required>
+        <option value="">-- Select Seats --</option>
+        <option value="100">100</option>
+        <option value="150">150</option>
+        <option value="200">200</option>
+        <option value="250">250</option>
+        <option value="300">300</option>
+      </select>
+
+      <input type="number" name="price" placeholder="💰 Price (₹)" required>
+
+      <button type="submit" class="add-flight-btn">✅ Add Flight</button>
+    </form>
+  </div>
+
+  <!-- Top Routes -->
+  <section class="admin-section">
+    <h2>📊 Top 10 Most Searched Routes</h2>
+    <table class="analytics-table">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Destination</th>
+          <th>Searches</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for route in popular_routes %}
+        <tr>
+          <td>{{ route[0] }}</td>
+          <td>{{ route[1] }}</td>
+          <td>{{ route[2] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- System Logs -->
+  <section class="admin-section">
+    <h2>📋 Recent System Logs</h2>
+    <ul class="log-list">
+      {% for log in logs %}
+      <li>
+        <strong>{{ log.timestamp.strftime('%d %b %Y %H:%M') }}</strong> — {{ log.action }}
+        {% if log.user %}<em>(by {{ log.user.full_name }})</em>{% endif %}
+      </li>
+      {% else %}
+      <li>No logs yet.</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+</div>
+
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+// Sweet Alert flash messages
+document.addEventListener('DOMContentLoaded', function () {
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      Swal.fire({
+        title: "{{ 'Success' if category == 'success' else 'Warning' }}",
+        html: "{{ message }}",
+        icon: "{{ category }}",
+        confirmButtonColor: "#2a9d8f",
+        confirmButtonText: 'OK'
+      });
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
+});
+
+// Duration Calculator
+function calculateDuration() {
+  const depTime = new Date(document.getElementById("departure_time").value);
+  const arrTime = new Date(document.getElementById("arrival_time").value);
+  const durationField = document.getElementById("duration");
+
+  if (!depTime || !arrTime || isNaN(depTime) || isNaN(arrTime)) {
+    durationField.value = "";
+    return;
+  }
+
+  const diff = (arrTime - depTime) / 1000;
+  if (diff <= 0) {
+    durationField.value = "Invalid time";
+    return;
+  }
+
+  const hrs = Math.floor(diff / 3600);
+  const mins = Math.floor((diff % 3600) / 60);
+  durationField.value = `${hrs}hr ${mins}min`;
+}
+
+// Form Validation
+function validateFlightForm() {
+  const depTime = new Date(document.getElementById("departure_time").value);
+  const arrTime = new Date(document.getElementById("arrival_time").value);
+  if (arrTime <= depTime) {
+    alert("⚠️ Arrival time must be after Departure time.");
+    return false;
+  }
+  return true;
+}
+
+// Live Clock + Dynamic Greeting
+function updateClockAndGreeting() {
+  const now = new Date();
+  
+  // Set Date
+  const dateOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+  document.getElementById('currentDate').textContent = now.toLocaleDateString('en-GB', dateOptions);
+
+  // Set Time
+  const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+  document.getElementById('currentTime').textContent = now.toLocaleTimeString('en-GB', timeOptions);
+
+  // Dynamic Greeting
+  const hour = now.getHours();
+  let greeting = "👋 Welcome, Admin!";
+  if (hour < 12) {
+    greeting = "🌅 Good Morning, Admin!";
+  } else if (hour < 18) {
+    greeting = "🌞 Good Afternoon, Admin!";
+  } else {
+    greeting = "🌙 Good Evening, Admin!";
+  }
+  document.getElementById('greeting').textContent = greeting;
+}
+
+setInterval(updateClockAndGreeting, 1000);
+updateClockAndGreeting();
+
+</script>
+
+</body>
+</html>
